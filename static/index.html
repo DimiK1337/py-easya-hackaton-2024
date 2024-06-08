@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload PDF and Mint Transaction</title>
+</head>
+<body>
+    <h1>Upload PDF and Mint Transaction</h1>
+    <form id="upload-form">
+        <label for="wallet-address">Wallet Address:</label>
+        <input type="text" id="wallet-address" name="wallet_address" required><br><br>
+        <label for="pdf-file">Select PDF:</label>
+        <input type="file" id="pdf-file" name="file" accept=".pdf" required><br><br>
+        <button type="submit">Upload PDF</button>
+    </form>
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = 'Uploading...';
+
+            try {
+                const response = await fetch('/upload_pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    responseDiv.innerHTML = `Credit score: ${result.credit_score}`;
+                } else {
+                    responseDiv.innerHTML = `Error: ${result.error}`;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
